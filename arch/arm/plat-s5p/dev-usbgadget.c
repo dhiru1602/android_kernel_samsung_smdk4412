@@ -12,7 +12,7 @@
 #include <linux/dma-mapping.h>
 #include <linux/interrupt.h>
 #include <linux/platform_device.h>
-#ifdef CONFIG_USB_ANDROID
+#if defined(CONFIG_USB_ANDROID) || defined(CONFIG_USB_G_ANDROID)
 #include <linux/usb/android_composite.h>
 #endif
 
@@ -21,7 +21,7 @@
 #include <plat/usbgadget.h>
 #include <plat/usb-phy.h>
 
-#ifdef CONFIG_USB_GADGET
+#if defined(CONFIG_USB_ANDROID) || defined(CONFIG_USB_G_ANDROID)
 /* USB Device (Gadget)*/
 static struct resource s3c_usbgadget_resource[] = {
 	[0] = {
@@ -62,7 +62,7 @@ void __init s5p_usbgadget_set_platdata(struct s5p_usbgadget_platdata *pd)
 }
 #endif /* CONFIG_USB_GADGET */
 
-#ifdef CONFIG_USB_ANDROID
+#if defined(CONFIG_USB_ANDROID) || defined(CONFIG_USB_G_ANDROID)
 #define S3C_VENDOR_ID			0x18d1
 
 /* single product ID*/

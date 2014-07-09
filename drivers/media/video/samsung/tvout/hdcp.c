@@ -16,8 +16,8 @@
 
 #include <mach/regs-hdmi.h>
 
-#include "hw_if.h"
-#include "../s5p_tvout_common_lib.h"
+#include "hw_if/hw_if.h"
+#include "s5p_tvout_common_lib.h"
 
 #undef tvout_dbg
 

@@ -1,4 +1,4 @@
-/* linux/arch/arm/mach-exynos4/gpiolib.c
+/* linux/drivers/gpio/gpio-exynos4.c
  *
  * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
  *		http://www.samsung.com
@@ -56,7 +56,7 @@ static struct s3c_gpio_cfg gpio_cfg_noint = {
 };
 
 /*
- * Following are the gpio banks in v310.
+ * Following are the gpio banks in exynos4.
  *
  * The 'config' member when left to NULL, is initialized to the default
  * structure gpio_cfg in the init function below.
@@ -65,6 +65,8 @@ static struct s3c_gpio_cfg gpio_cfg_noint = {
  * Note: The initialization of 'base' member of s3c_gpio_chip structure
  * uses the above macro and depends on the banks being listed in order here.
  */
+static struct s3c_gpio_pm s3c_gpio_pm_nop = { NULL, NULL };
+
 static struct s3c_gpio_chip exynos4_gpio_common_4bit[] = {
 	{
 		.base	= S5P_VA_GPIO1,
@@ -174,6 +176,9 @@ static struct s3c_gpio_chip exynos4_gpio_common_4bit[] = {
 			.ngpio	= EXYNOS4_GPIO_K0_NR,
 			.label	= "GPK0",
 		},
+#ifdef CONFIG_MACH_MIDAS
+		.pm	= &s3c_gpio_pm_nop,
+#endif
 	}, {
 		.base   = (S5P_VA_GPIO2 + 0x60),
 		.eint_offset = 0xC,
@@ -467,6 +472,8 @@ static struct s3c_gpio_chip exynos4212_gpio_4bit[] = {
 		},
 	}, {
 		.base   = S5P_VA_GPIO4,
+		.eint_offset = 0x00,
+		.group	= 28,
 		.chip	= {
 			.base	= EXYNOS4212_GPV0(0),
 			.ngpio	= EXYNOS4212_GPIO_V0_NR,
@@ -474,6 +481,8 @@ static struct s3c_gpio_chip exynos4212_gpio_4bit[] = {
 		},
 	}, {
 		.base   = (S5P_VA_GPIO4 + 0x20),
+		.eint_offset = 0x04,
+		.group	= 29,
 		.chip	= {
 			.base	= EXYNOS4212_GPV1(0),
 			.ngpio	= EXYNOS4212_GPIO_V1_NR,
@@ -481,6 +490,8 @@ static struct s3c_gpio_chip exynos4212_gpio_4bit[] = {
 		},
 	}, {
 		.base   = (S5P_VA_GPIO4 + 0x60),
+		.eint_offset = 0x08,
+		.group	= 30,
 		.chip	= {
 			.base	= EXYNOS4212_GPV2(0),
 			.ngpio	= EXYNOS4212_GPIO_V2_NR,
@@ -488,6 +499,8 @@ static struct s3c_gpio_chip exynos4212_gpio_4bit[] = {
 		},
 	}, {
 		.base   = (S5P_VA_GPIO4 + 0x80),
+		.eint_offset = 0x0C,
+		.group	= 31,
 		.chip	= {
 			.base	= EXYNOS4212_GPV3(0),
 			.ngpio	= EXYNOS4212_GPIO_V3_NR,
@@ -495,6 +508,8 @@ static struct s3c_gpio_chip exynos4212_gpio_4bit[] = {
 		},
 	}, {
 		.base   = (S5P_VA_GPIO4 + 0xC0),
+		.eint_offset = 0x10,
+		.group	= 32,
 		.chip	= {
 			.base	= EXYNOS4212_GPV4(0),
 			.ngpio	= EXYNOS4212_GPIO_V4_NR,
@@ -502,6 +517,107 @@ static struct s3c_gpio_chip exynos4212_gpio_4bit[] = {
 		},
 	},
 };
+
+/* EXYNOS4 machine dependent GPIO help function */
+int s3c_gpio_slp_cfgpin(unsigned int pin, unsigned int config)
+{
+	struct s3c_gpio_chip *chip = s3c_gpiolib_getchip(pin);
+	void __iomem *reg;
+	unsigned long flags;
+	int offset;
+	u32 con;
+	int shift;
+
+	if (!chip)
+		return -EINVAL;
+
+	if ((pin >= EXYNOS4_GPX0(0)) && (pin <= EXYNOS4_GPX3(7)))
+		return -EINVAL;
+
+	if (config > S3C_GPIO_SLP_PREV)
+		return -EINVAL;
+
+	reg = chip->base + 0x10;
+
+	offset = pin - chip->chip.base;
+	shift = offset * 2;
+
+	local_irq_save(flags);
+
+	con = __raw_readl(reg);
+	con &= ~(3 << shift);
+	con |= config << shift;
+	__raw_writel(con, reg);
+
+	local_irq_restore(flags);
+	return 0;
+}
+
+s3c_gpio_pull_t s3c_gpio_get_slp_cfgpin(unsigned int pin)
+{
+	struct s3c_gpio_chip *chip = s3c_gpiolib_getchip(pin);
+	void __iomem *reg;
+	unsigned long flags;
+	int offset;
+	u32 con;
+	int shift;
+
+	if (!chip)
+		return -EINVAL;
+
+	if ((pin >= EXYNOS4_GPX0(0)) && (pin <= EXYNOS4_GPX3(7)))
+		return -EINVAL;
+
+	reg = chip->base + 0x10;
+
+	offset = pin - chip->chip.base;
+	shift = offset * 2;
+
+	local_irq_save(flags);
+
+	con = __raw_readl(reg);
+	con >>= shift;
+	con &= 0x3;
+
+	local_irq_restore(flags);
+
+	return (__force s3c_gpio_pull_t)con;
+}
+
+int s3c_gpio_slp_setpull_updown(unsigned int pin, unsigned int config)
+{
+	struct s3c_gpio_chip *chip = s3c_gpiolib_getchip(pin);
+	void __iomem *reg;
+	unsigned long flags;
+	int offset;
+	u32 con;
+	int shift;
+
+	if (!chip)
+		return -EINVAL;
+
+	if ((pin >= EXYNOS4_GPX0(0)) && (pin <= EXYNOS4_GPX3(7)))
+		return -EINVAL;
+
+	if (config > S3C_GPIO_PULL_UP)
+		return -EINVAL;
+
+	reg = chip->base + 0x14;
+
+	offset = pin - chip->chip.base;
+	shift = offset * 2;
+
+	local_irq_save(flags);
+
+	con = __raw_readl(reg);
+	con &= ~(3 << shift);
+	con |= config << shift;
+	__raw_writel(con, reg);
+
+	local_irq_restore(flags);
+
+	return 0;
+}
 
 static __init int exynos4_gpiolib_init(void)
 {

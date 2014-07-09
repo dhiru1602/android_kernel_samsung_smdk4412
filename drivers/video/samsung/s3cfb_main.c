@@ -42,13 +42,7 @@
 
 struct s3cfb_fimd_desc		*fbfimd;
 
-#ifdef CONFIG_FB_S5P_MIPI_DSIM
-
-extern  void s5p_dsim_init(void);
-
-#endif
-
-inline struct s3cfb_global *get_fimd_global(int id)
+struct s3cfb_global *get_fimd_global(int id)
 {
 	struct s3cfb_global *fbdev;
 
@@ -275,7 +269,6 @@ static int s3cfb_probe(struct platform_device *pdev)
 		pdata = to_fb_plat(&pdev->dev);
 
 #if defined(CONFIG_FB_S5P_MIPI_DSIM)
-        s5p_dsim_init();
         
 		if (pdata->lcd)
 			fbdev[i]->lcd = (struct s3cfb_lcd *)pdata->lcd;
@@ -454,6 +447,9 @@ extern void lms501kf03_ldi_disable(void);
 #endif
 
 #ifdef CONFIG_HAS_EARLYSUSPEND
+void (*lcd_early_suspend)(void);
+void (*lcd_late_resume)(void);
+
 void s3cfb_early_suspend(struct early_suspend *h)
 {
 	struct s3cfb_global *info = container_of(h, struct s3cfb_global, early_suspend);
@@ -463,6 +459,11 @@ void s3cfb_early_suspend(struct early_suspend *h)
 	int i;
 
 	printk("s3cfb_early_suspend is called\n");
+
+#ifdef CONFIG_FB_S5P_MIPI_DSIM
+	if (lcd_early_suspend)
+		lcd_early_suspend();
+#endif
 
 #if defined(CONFIG_FB_S5P_LG4591)
 	lg4591_early_suspend();
@@ -528,13 +529,9 @@ void s3cfb_late_resume(struct early_suspend *h)
 #ifdef CONFIG_FB_S5P_MIPI_DSIM
 	s5p_dsim_late_resume();
 
-	if (s5p_dsim_fifo_clear() == 0) {
-		s5p_dsim_early_suspend();
-		msleep(10);
-		s5p_dsim_late_resume();
-		if (s5p_dsim_fifo_clear() == 0)
-			pr_info("dsim resume fail!!!\n");
-	}
+	s5p_dsim_early_suspend();
+	msleep(10);
+	s5p_dsim_late_resume();
 
 	msleep(10);
 #endif
@@ -600,6 +597,11 @@ void s3cfb_late_resume(struct early_suspend *h)
 
 #if defined(CONFIG_FB_S5P_S6EVR01)
 	s6evr01_late_resume();
+#endif
+
+#ifdef CONFIG_FB_S5P_MIPI_DSIM
+	if (lcd_late_resume)
+		lcd_late_resume();
 #endif
 
 	return;

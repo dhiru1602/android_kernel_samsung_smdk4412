@@ -375,6 +375,7 @@ static void s3c24xx_serial_break_ctl(struct uart_port *port, int break_state)
 static void s3c24xx_serial_shutdown(struct uart_port *port)
 {
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
+	struct s3c2410_uartcfg *cfg = s3c24xx_port_to_cfg(port);
 
 	if (ourport->tx_claimed) {
 		disable_irq(ourport->tx_irq);
@@ -389,16 +390,24 @@ static void s3c24xx_serial_shutdown(struct uart_port *port)
 		ourport->rx_claimed = 0;
 		rx_enabled(port) = 0;
 	}
+
+	if (cfg->set_runstate)
+		cfg->set_runstate(0);
 }
 
 
 static int s3c24xx_serial_startup(struct uart_port *port)
 {
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
+	struct s3c2410_uartcfg *cfg = s3c24xx_port_to_cfg(port);
 	int ret;
 
 	dbg("s3c24xx_serial_startup: port=%p (%08lx,%p)\n",
 	    port->mapbase, port->membase);
+
+	/* runstate should be 1 before request_irq is called */
+	if (cfg->set_runstate)
+		cfg->set_runstate(1);
 
 	rx_enabled(port) = 1;
 

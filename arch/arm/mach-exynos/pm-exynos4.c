@@ -33,6 +33,8 @@
 #include <mach/pmu.h>
 #include <mach/smc.h>
 
+void (*exynos4_sleep_gpio_table_set)(void);
+
 #ifdef CONFIG_ARM_TRUSTZONE
 #define REG_INFORM0            (S5P_VA_SYSRAM_NS + 0x8)
 #define REG_INFORM1            (S5P_VA_SYSRAM_NS + 0xC)
@@ -212,6 +214,9 @@ void exynos4_cpu_suspend(void)
 
 static void exynos4_pm_prepare(void)
 {
+	if (exynos4_sleep_gpio_table_set)
+		exynos4_sleep_gpio_table_set();
+
 	/* Set value of power down register for sleep mode */
 
 	exynos4_sys_powerdown_conf(SYS_SLEEP);

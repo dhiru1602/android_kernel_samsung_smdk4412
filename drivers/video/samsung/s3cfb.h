@@ -136,8 +136,12 @@ struct s3cfb_lcd {
 #endif
 	int	width;
 	int	height;
+	int	p_width;
+	int	p_height;
 	int	bpp;
 	int	freq;
+	int	freq_limit;
+	int	vclk;
 	struct	s3cfb_lcd_timing timing;
 	struct	s3cfb_lcd_polarity polarity;
 #ifdef CONFIG_FB_S5P_MIPI_DSIM
@@ -231,7 +235,7 @@ struct s3cfb_user_chroma {
 #define S3CFB_GET_FB_PHY_ADDR           _IOR('F', 310, unsigned int)
 
 extern struct fb_ops			s3cfb_ops;
-extern inline struct s3cfb_global	*get_fimd_global(int id);
+extern struct s3cfb_global		*get_fimd_global(int id);
 
 /* S3CFB */
 extern struct s3c_platform_fb *to_fb_plat(struct device *dev);
@@ -329,7 +333,7 @@ extern void s5p_dsim_early_suspend(void);
 extern void s5p_dsim_late_resume(void);
 extern int s5p_dsim_fifo_clear(void);
 extern void set_dsim_hs_clk_toggle_count(u8 count);
-extern void set_dsim_lcd_enabled(void);
+extern void set_dsim_lcd_enabled(u8 enable);
 extern u32 read_dsim_register(u32 num);
 #endif
 

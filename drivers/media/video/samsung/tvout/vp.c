@@ -15,8 +15,8 @@
 
 #include <mach/regs-vp.h>
 
-#include "../s5p_tvout_common_lib.h"
-#include "hw_if.h"
+#include "s5p_tvout_common_lib.h"
+#include "hw_if/hw_if.h"
 
 #undef tvout_dbg
 

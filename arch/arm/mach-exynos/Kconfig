@@ -441,6 +441,11 @@ config EXYNOS5250_1000MHZ_SUPPORT
 
 endchoice
 
+config MIDAS_COMMON
+	bool
+	help
+	  Support common devices of MIDAS boards
+
 menu "Support dynamic CPU Hotplug"
 	depends on HOTPLUG_CPU && SMP
 
@@ -695,6 +700,173 @@ config MACH_ODROID_4X12
 	select SAMSUNG_DEV_PWM
 	help
 	  Machine support for Hardkernel ODROID_4X12
+
+config MACH_MIDAS
+	bool "MIDAS board"
+	select CPU_EXYNOS4212
+	select CPU_EXYNOS4412
+	select S3C_DEV_WDT
+	select S3C_DEV_RTC
+	select S3C_DEV_HSMMC2
+	select S3C_DEV_HSMMC3
+	select SAMSUNG_DEV_ADC
+	select S3C_DEV_I2C1
+	select S3C_DEV_I2C3
+	select S3C_DEV_I2C6
+	select S3C_DEV_I2C7
+	select S5P_GPIO_INT
+	select S5P_DEV_MFC
+	select S5P_DEV_FIMG2D
+	select S5P_DEV_FIMD_S5P
+	select S5P_DEV_USB_EHCI
+	select S5P_DEV_USBGADGET
+	select EXYNOS4_DEV_MSHC
+	select EXYNOS4_SETUP_MSHCI
+	select EXYNOS4_MSHC_MPLL_40MHZ
+	select EXYNOS4_MSHC_DDR
+	select EXYNOS4_MSHC_8BIT
+	select EXYNOS4_SETUP_SDHCI
+	select EXYNOS4_DEV_FIMC_LITE
+	select EXYNOS4_SETUP_FB_S5P
+	select EXYNOS4_SETUP_I2C1
+	select EXYNOS4_SETUP_I2C3
+	select EXYNOS4_SETUP_I2C4
+	select EXYNOS4_SETUP_I2C5
+	select EXYNOS4_SETUP_I2C6
+	select EXYNOS4_SETUP_I2C7
+	select EXYNOS4_SETUP_USB_PHY
+	select EXYNOS4_SETUP_MFC
+	select SAMSUNG_DEV_BACKLIGHT
+	select SAMSUNG_DEV_PWM
+	select EXYNOS_DEV_PD
+	select EXYNOS4_SETUP_MFC
+	select MIDAS_COMMON
+	help
+	  Machine support for Samsung midas board
+
+choice
+	prompt "EXYNOS4212 board"
+	depends on MACH_MIDAS
+	default MACH_M0
+
+config MACH_M0
+	bool "M0 board"
+	select S3C_DEV_I2C4
+	select S3C_DEV_I2C5
+	select MIDAS_COMMON_BD
+
+config MACH_C1
+	bool "C1 board"
+	select S3C_DEV_I2C4
+	select S3C_DEV_I2C5
+	select MIDAS_COMMON_BD
+
+config MACH_M3
+	bool "C2 board"
+	select S3C_DEV_I2C4
+	select S3C_DEV_I2C5
+	select MIDAS_COMMON_BD
+
+config MACH_P4NOTE
+	bool "P4 Note board"
+	select S3C_DEV_I2C4
+	select S3C_DEV_I2C5
+	select P4NOTE_00_BD
+
+config MACH_GC1
+	bool "Galuxy Camera board"
+	select S3C_DEV_I2C4
+	select S3C_DEV_I2C5
+	select GC1_00_BD
+
+config MACH_T0
+	bool "T0 board"
+	select EXYNOS4_SETUP_I2C2
+	select S3C_DEV_I2C2
+	select S3C_DEV_I2C4
+	select S3C_DEV_I2C5
+
+config MACH_KONA
+        bool "KONA Note8 board"
+        select S3C_DEV_I2C4
+        select S3C_DEV_I2C5
+
+config MACH_IRON
+	bool "Iron board"
+	select S3C_DEV_I2C4
+	select S3C_DEV_I2C5
+	select IRON_BD
+	select EXYNOS4_SETUP_KEYPAD
+	select SAMSUNG_DEV_KEYPAD
+
+config MACH_GRANDE
+	bool "Grande board"
+	select S3C_DEV_I2C4
+	select S3C_DEV_I2C5
+	select GRANDE_BD
+	select EXYNOS4_SETUP_KEYPAD
+	select SAMSUNG_DEV_KEYPAD
+
+config MACH_BAFFIN
+	bool "BAFFIN board"
+	select S3C_DEV_I2C4
+	select S3C_DEV_I2C5
+endchoice
+
+config MIDAS_COMMON_BD
+	bool "Midas default common Board"
+
+config P4NOTE_00_BD
+	bool "P4 Note PQ common Board"
+
+config GC1_00_BD
+	bool "Galaxy Camera common Board"
+
+config T0_00_BD
+	bool "T0 Revison 00 board"
+	default n
+
+config T0_04_BD
+	bool "T0 Revison 04 board"
+	default n
+
+config KONA_00_BD
+        bool "KONA note8 rev00 common Board"
+        default n
+
+config KONA_01_BD
+        bool "KONA note8 rev01 common Board"
+        default n
+
+config IRON_BD
+	bool "Iron common Board"
+
+config GRANDE_BD
+	bool "Grande common Board"
+
+config WRITEBACK_ENABLED
+	bool "Samsung Writeback Enable"
+	help
+	  This option enables writeback operations. It can
+	  support fimd streams data to fimc destinations ram.
+	  writeback operations support final blended stream.
+	  when enable this options.
+
+config EXYNOS_SOUND_PLATFORM_DATA
+	bool "Sound platform data"
+
+config JACK_FET
+	bool "Ear Micbias dischage Enable"
+
+config JACK_GROUND_DET
+	bool "Ear Ground Detection Enable"
+
+config USE_ADC_DET
+        bool "Jack Detection with ADC IC"
+
+config SAMSUNG_ANALOG_UART_SWITCH
+	int "SAMSUNG analog switch for UART"
+	default 1
 
 endmenu
 

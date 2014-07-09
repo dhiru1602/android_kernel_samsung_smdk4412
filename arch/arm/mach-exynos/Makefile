@@ -68,6 +68,20 @@ ifeq ($(CONFIG_MACH_ODROID_4X12),y)
 	obj-$(CONFIG_BOARD_SMD_A2)		+= mach-smd-a2.o odroid-sysfs.o
 endif
 
+obj-$(CONFIG_MACH_MIDAS)		+= mach-midas.o
+obj-$(CONFIG_MACH_MIDAS)		+= sec-reboot.o midas-sensor.o
+obj-$(CONFIG_MIDAS_COMMON)		+= sec-common.o board-gps-bcm475x.o \
+					   midas-tsp.o board-midas-wlan.o \
+					   midas-camera.o midas-thermistor.o \
+					   midas-mhl.o midas-lcd.o midas-sound.o
+obj-$(CONFIG_MIDAS_COMMON_BD)		+= midas-gpio.o midas-power.o
+
+# AFLAGS
+
+CFLAGS_exynos4-smc.o :=$(call as-instr,.arch_extension sec)
+AFLAGS_sleep-exynos4.o :=$(call as-instr,.arch_extension sec)
+AFLAGS_idle-exynos4.o :=$(call as-instr,.arch_extension sec)
+
 # device support
 
 obj-$(CONFIG_ODROID_FAN)		+= odroid_fan.o
@@ -127,6 +141,7 @@ obj-$(CONFIG_EXYNOS4_CONTENT_PATH_PROTECTION) += secmem-allocdev.o
 obj-$(CONFIG_WAKEUP_ASSIST)		+= wakeup_assist.o
 
 obj-$(CONFIG_ION_EXYNOS)		+= dev-ion.o
+obj-$(CONFIG_MFD_MAX77693)		+= sec-switch.o
 obj-$(CONFIG_EXYNOS_C2C)		+= setup-c2c.o
 obj-$(CONFIG_EXYNOS_THERMAL)		+= tmu-exynos.o
 

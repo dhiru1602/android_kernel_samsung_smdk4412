@@ -292,6 +292,19 @@ static int exynos4_check_operation(void)
 	return 0;
 }
 
+static int gps_is_running;
+
+void set_gps_uart_op(int onoff)
+{
+	pr_info("%s: %s\n", __func__, onoff ? "on" : "off");
+	gps_is_running = onoff;
+}
+
+static inline int check_gps_uart_op(void)
+{
+	return gps_is_running;
+}
+
 static struct sleep_save exynos4_lpa_save[] = {
 	/* CMU side */
 	SAVE_ITEM(EXYNOS4_CLKSRC_MASK_TOP),

@@ -80,6 +80,7 @@ struct s3c_platform_camera {
 
 	const char			srclk_name[16];	/* source of mclk name */
 	const char			clk_name[16];	/* mclk name */
+	const char*			(*get_clk_name)(void);	/* mclk name */
 	u32				clk_rate;	/* mclk ratio */
 	struct clk			*clk;		/* mclk */
 	int				line_length;	/* max length */
