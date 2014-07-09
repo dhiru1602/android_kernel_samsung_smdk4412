@@ -2483,7 +2483,7 @@ static void __init exynos4_reserve_mem(void)
 			.start = 0
 		},
 #endif
-#if !defined(CONFIG_EXYNOS_CONTENT_PATH_PROTECTION) && \
+#if !defined(CONFIG_EXYNOS4_CONTENT_PATH_PROTECTION) && \
 	defined(CONFIG_VIDEO_SAMSUNG_MEMSIZE_MFC0)
 		{
 			.name = "mfc0",
@@ -2494,7 +2494,7 @@ static void __init exynos4_reserve_mem(void)
 			.start = 0,
 		},
 #endif
-#if !defined(CONFIG_EXYNOS_CONTENT_PATH_PROTECTION) && \
+#if !defined(CONFIG_EXYNOS4_CONTENT_PATH_PROTECTION) && \
 	defined(CONFIG_ION_EXYNOS_CONTIGHEAP_SIZE)
 		{
 			.name	= "ion",
@@ -2511,7 +2511,7 @@ static void __init exynos4_reserve_mem(void)
 			.start = 0
 		},
 #endif
-#if !defined(CONFIG_EXYNOS_CONTENT_PATH_PROTECTION) && \
+#if !defined(CONFIG_EXYNOS4_CONTENT_PATH_PROTECTION) && \
 	defined(CONFIG_VIDEO_SAMSUNG_S5P_MFC)
 		{
 			.name		= "b2",
@@ -2585,7 +2585,7 @@ static void __init exynos4_reserve_mem(void)
 			.size = 0
 		},
 	};
-#ifdef CONFIG_EXYNOS_CONTENT_PATH_PROTECTION
+#ifdef CONFIG_EXYNOS4_CONTENT_PATH_PROTECTION
 	static struct cma_region regions_secure[] = {
 #ifndef CONFIG_DMA_CMA
 #ifdef CONFIG_ION_EXYNOS_CONTIGHEAP_SIZE
@@ -2648,7 +2648,7 @@ static void __init exynos4_reserve_mem(void)
 			.size = 0
 		},
 	};
-#else /* !CONFIG_EXYNOS_CONTENT_PATH_PROTECTION */
+#else /* !CONFIG_EXYNOS4_CONTENT_PATH_PROTECTION */
 	struct cma_region *regions_secure = NULL;
 #endif
 
@@ -2677,7 +2677,7 @@ static void __init exynos4_reserve_mem(void)
 		"exynos4-fimc-is=fimc_is;"
 #endif
 		"s5p-fimg2d=fimg2d;"
-#ifdef CONFIG_EXYNOS_CONTENT_PATH_PROTECTION
+#ifdef CONFIG_EXYNOS4_CONTENT_PATH_PROTECTION
 		"s5p-smem/sectbl=sectbl;"
 #endif
 		"s5p-smem/mfc=mfc-secure;"
