@@ -83,6 +83,7 @@ atomic_long_t vm_stat[NR_VM_ZONE_STAT_ITEMS];
 #else
 atomic_long_t vm_stat[NR_VM_ZONE_STAT_ITEMS] __cacheline_aligned_in_smp;
 #endif
+
 EXPORT_SYMBOL(vm_stat);
 
 #ifdef CONFIG_SMP

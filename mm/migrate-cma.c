@@ -687,7 +687,7 @@ static int move_to_new_page(struct page *newpage, struct page *page,
 			 * path for page migration.
 			 */
 			rc = mapping->a_ops->migratepage(mapping,
-							newpage, page);
+							newpage, page, MIGRATE_SYNC);
 			if (rc) {
 				if (is_failed_page(page, pass, tries)) {
 					printk(KERN_ERR "%s[%d]: 3 ",
